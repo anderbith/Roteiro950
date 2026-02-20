@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro Pro - ROTA 950</title>
+    <style>
+        :root { --primary: #1e293b; --accent: #2563eb; --bg: #f1f5f9; --success: #10b981; --warning: #f59e0b; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px 10px 80px 10px; color: var(--primary); }
+        .container { max-width: 500px; margin: 0 auto; }
+        
+        header { background: var(--primary); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 10px; }
+        
+        .status-bar { background: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-around; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
+        /* Dashboard Cards */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .dash-card { background: white; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .dash-value { font-size: 1.5rem; font-weight: 800; display: block; color: var(--accent); }
+        .dash-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+
+        .progress-circle { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(var(--success) var(--perc, 0%), #e2e8f0 0); margin: 10px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* Lista de Lojas */
+        .dia-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .dia-card h3 { margin-top: 0; color: var(--primary); border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+        .rede-header { font-weight: 800; color: #475569; background: #f8fafc; padding: 6px 10px; margin-top: 15px; border-radius: 4px; font-size: 0.75rem; }
+        .loja-item { display: flex; align-items: center; padding: 12px 5px; border-bottom: 1px solid #f1f5f9; }
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; }
+        .done { text-decoration: line-through; color: #94a3b8; opacity: 0.7; }
+
+        /* Navegação */
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-btn { background: none; border: none; color: #64748b; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+        .nav-btn.active { color: var(--accent); font-weight: bold; }
+        .nav-btn svg { width: 24px; height: 24px; }
+
+        .btn-sync { background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
+        .loading { text-align: center; color: #64748b; padding: 30px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2 id="semana-info" style="margin:0">Carregando...</h2>
+        <div id="data-hoje" style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;"></div>
+    </header>
+
+    <div id="view-hoje" class="view-section">
+        <button class="btn-sync" onclick="buscarDados()">🔄 Sincronizar Planilha</button>
+        <div class="status-bar">
+            <span>Lojas Hoje: <span id="total-cont">0</span></span>
+            <span>Visitadas: <span id="check-cont" style="color:var(--success)">0</span></span>
+        </div>
+        <div id="cronograma-hoje"></div>
+    </div>
+
+    <div id="view-semana" class="view-section hidden">
+        <h3 style="text-align: center; color: #64748b;">Roteiro da Semana Ativa</h3>
+        <div id="cronograma-semana"></div>
+    </div>
+
+    <div id="view-dash" class="view-section hidden">
+        <div class="dash-grid">
+            <div class="dash-card">
+                <span class="dash-label">Progresso Total</span>
+                <div class="progress-circle" id="dash-perc">0%</div>
+            </div>
+            <div class="dash-card">
+                <span class="dash-label">Meta Semanal</span>
+                <span class="dash-value" id="dash-total">0</span>
+                <span class="dash-label">Lojas Cadastradas</span>
+            </div>
+        </div>
+        <div class="dash-card" style="margin-bottom: 10px;">
+            <span class="dash-label">Status das Visitas</span>
+            <div style="display: flex; justify-content: space-around; margin-top:10px;">
+                <div><span class="dash-value" id="dash-feitas" style="color:var(--success)">0</span><small>Realizadas</small></div>
+                <div><span class="dash-value" id="dash-faltam" style="color:var(--warning)">0</span><small>Restantes</small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav>
+    <button class="nav-btn active" onclick="switchView('hoje', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        Hoje
+    </button>
+    <button class="nav-btn" onclick="switchView('semana', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"/></svg>
+        Semana
+    </button>
+    <button class="nav-btn" onclick="switchView('dash', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        Dashboard
+    </button>
+</nav>
+
+<script>
+    const SHEET_ID = '1VBS5RyF96ecTWNbFEEiUjvWKCaK69R_NAUhozIOCso4';
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+    
+    let dadosPlanilha = [];
+    let checkins = JSON.parse(localStorage.getItem('checkins_v5')) || {};
+
+    function getWeekNumber(d) {
+        d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+        return Math.ceil((((d - new Date(Date.UTC(d.getUTCFullYear(), 0, 1))) / 86400000) + 1) / 7);
+    }
+
+    async function buscarDados() {
+        try {
+            const response = await fetch(URL);
+            const text = await response.text();
+            dadosPlanilha = text.split('\n').map(l => l.split('","').map(c => c.replace(/"/g, '').trim()));
+            renderizar();
+        } catch (e) {
+            alert("Erro ao conectar com a planilha.");
+        }
+    }
+
+    function renderizar() {
+        const semanaAtiva = (getWeekNumber(new Date()) % 2 === 0) ? 2 : 1;
+        const diasSemanaMap = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+        const hojeNome = diasSemanaMap[new Date().getDay()];
+
+        document.getElementById('semana-info').innerText = `Semana ${semanaAtiva}`;
+        document.getElementById('data-hoje').innerText = hojeNome.toUpperCase() + ", " + new Date().toLocaleDateString('pt-BR');
+
+        let htmlHoje = '';
+        let htmlSemana = '';
+        
+        let stats = { hojeTotal: 0, hojeFeito: 0, semTotal: 0, semFeito: 0 };
+
+        const diasArray = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"];
+
+        diasArray.forEach(diaNome => {
+            const itensDoDia = dadosPlanilha.filter(cols => cols[0] == semanaAtiva && cols[1].toLowerCase() == diaNome);
+            if (itensDoDia.length === 0) return;
+
+            let diaHtml = `<div class="dia-card"><h3>${diaNome.toUpperCase()}</h3>`;
+            
+            itensDoDia.forEach(cols => {
+                const [sem, dia, tipo, nome] = cols;
+                if (tipo.toUpperCase() === "REDE") {
+                    diaHtml += `<div class="rede-header">${nome}</div>`;
+                } else if (nome) {
+                    const id = `v5-${semanaAtiva}-${diaNome}-${nome.replace(/\W/g, '')}`;
+                    const isChecked = checkins[id] ? 'checked' : '';
+                    
+                    stats.semTotal++;
+                    if(isChecked) stats.semFeito++;
+
+                    if (diaNome === hojeNome) {
+                        stats.hojeTotal++;
+                        if(isChecked) stats.hojeFeito++;
+                    }
+
+                    diaHtml += `
+                        <div class="loja-item ${isChecked ? 'done' : ''}">
+                            <input type="checkbox" ${isChecked} onchange="toggleCheck(this, '${id}')">
+                            <span>${nome}</span>
+                        </div>`;
+                }
+            });
+            diaHtml += `</div>`;
+
+            if (diaNome === hojeNome) htmlHoje = diaHtml;
+            htmlSemana += diaHtml;
+        });
+
+        // Atualiza interface
+        document.getElementById('cronograma-hoje').innerHTML = htmlHoje || '<div class="loading">Folga hoje! 🥳</div>';
+        document.getElementById('cronograma-semana').innerHTML = htmlSemana;
+        
+        // Stats Hoje
+        document.getElementById('total-cont').innerText = stats.hojeTotal;
+        document.getElementById('check-cont').innerText = stats.hojeFeito;
+
+        // Stats Dashboard
+        const perc = stats.semTotal > 0 ? Math.round((stats.semFeito / stats.semTotal) * 100) : 0;
+        document.getElementById('dash-perc').innerText = perc + '%';
+        document.getElementById('dash-perc').style.setProperty('--perc', perc + '%');
+        document.getElementById('dash-total').innerText = stats.semTotal;
+        document.getElementById('dash-feitas').innerText = stats.semFeito;
+        document.getElementById('dash-faltam').innerText = stats.semTotal - stats.semFeito;
+    }
+
+    function toggleCheck(el, id) {
+        if (el.checked) checkins[id] = true;
+        else delete checkins[id];
+        localStorage.setItem('checkins_v5', JSON.stringify(checkins));
+        renderizar();
+    }
+
+    function switchView(viewId, btn) {
+        document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+        document.getElementById('view-' + viewId).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    buscarDados();
+</script>
+
+</body>
+</html>

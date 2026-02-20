@@ -3,41 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roteiro Pro - ROTA 950</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Roteiro - ROTA 950</title>
     <style>
-        :root { --primary: #1e293b; --accent: #2563eb; --bg: #f1f5f9; --success: #10b981; --warning: #f59e0b; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 10px 10px 80px 10px; color: var(--primary); }
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        header { background: var(--primary); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 10px; }
-        
-        .status-bar { background: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-around; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        
-        /* Dashboard Cards */
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .dash-card { background: white; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .dash-value { font-size: 1.5rem; font-weight: 800; display: block; color: var(--accent); }
-        .dash-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+        :root {
+    --primary: #0f172a;
+    --accent: #3b82f6;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
 
-        .progress-circle { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(var(--success) var(--perc, 0%), #e2e8f0 0); margin: 10px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 0 0 90px 0;
+    color: var(--text-main);
+    -webkit-tap-highlight-color: transparent;
+}
 
-        /* Lista de Lojas */
-        .dia-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .dia-card h3 { margin-top: 0; color: var(--primary); border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
-        .rede-header { font-weight: 800; color: #475569; background: #f8fafc; padding: 6px 10px; margin-top: 15px; border-radius: 4px; font-size: 0.75rem; }
-        .loja-item { display: flex; align-items: center; padding: 12px 5px; border-bottom: 1px solid #f1f5f9; }
-        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 12px; cursor: pointer; }
-        .done { text-decoration: line-through; color: #94a3b8; opacity: 0.7; }
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 16px;
+}
 
-        /* Navegação */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
-        .nav-btn { background: none; border: none; color: #64748b; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
-        .nav-btn.active { color: var(--accent); font-weight: bold; }
-        .nav-btn svg { width: 24px; height: 24px; }
+/* Header Estilizado */
+header {
+    background: var(--primary);
+    color: white;
+    padding: 30px 20px;
+    border-radius: 0 0 24px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
 
-        .btn-sync { background: var(--accent); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
-        .loading { text-align: center; color: #64748b; padding: 30px; }
-        .hidden { display: none; }
+header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+/* Status Bar Moderna */
+.status-bar {
+    background: var(--card);
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: var(--shadow);
+    border: 1px solid #e2e8f0;
+}
+
+.status-bar span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.status-bar b {
+    color: var(--primary);
+    font-size: 1rem;
+    display: block;
+    text-align: center;
+}
+
+/* Botão Sync */
+.btn-sync {
+    background: white;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    padding: 12px;
+    border-radius: 12px;
+    width: 100%;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-weight: 700;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-sync:active {
+    background: var(--accent);
+    color: white;
+    transform: scale(0.98);
+}
+
+/* Lista de Lojas */
+.dia-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.dia-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+}
+
+.rede-header {
+    font-weight: 800;
+    color: var(--text-main);
+    background: #f1f5f9;
+    padding: 8px 12px;
+    margin: 15px -5px 5px -5px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+
+.loja-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.loja-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+/* Custom Checkbox */
+input[type="checkbox"] {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+input[type="checkbox"]:checked {
+    background: var(--success);
+    border-color: var(--success);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    left: 4px;
+    top: -1px;
+}
+
+.done span {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Botão de Rota */
+.btn-rota {
+    background: #eff6ff;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    transition: background 0.2s;
+}
+
+.btn-rota:active {
+    background: #dbeafe;
+}
+
+/* Dashboard */
+.dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.dash-card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.progress-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, white 82%, transparent 0), 
+                conic-gradient(var(--success) var(--perc, 0%), #f1f5f9 0);
+    margin: 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+/* Navegação inferior estilo iOS/Android */
+nav {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 8px 12px;
+    border-radius: 16px;
+}
+
+.nav-btn svg { width: 22px; height: 22px; transition: transform 0.2s; }
+
+.nav-btn.active {
+    color: var(--accent);
+    background: #eff6ff;
+}
+
+.nav-btn.active svg {
+    transform: translateY(-2px);
+}
+
+/* Animações de Fade */
+.view-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden { display: none; }
+
+/* Custom Dashboard KPIs */
+.kpi-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.kpi-small {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px !important;
+}
+
+.kpi-sub-grid {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+}
+
+.dash-value-sm {
+    font-size: 1.2rem;
+    font-weight: 800;
+    display: block;
+}
+
+.kpi-trend {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.detail-stats { margin-bottom: 12px; }
+
+.stat-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+.stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.stat-icon.success { background: #dcfce7; color: var(--success); }
+.stat-icon.warning { background: #fef3c7; color: var(--warning); }
+
+.stat-separator {
+    width: 1px;
+    height: 40px;
+    background: #e2e8f0;
+}
+
+.projecao-card {
+    padding: 15px 20px !important;
+    text-align: left !important;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: #e2e8f0;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
     </style>
 </head>
 <body>
@@ -62,7 +392,7 @@
         <div id="cronograma-semana"></div>
     </div>
 
-    <div id="view-dash" class="view-section hidden">
+    <!-- <div id="view-dash" class="view-section hidden">
         <div class="dash-grid">
             <div class="dash-card">
                 <span class="dash-label">Progresso Total</span>
@@ -81,7 +411,59 @@
                 <div><span class="dash-value" id="dash-faltam" style="color:var(--warning)">0</span><small>Restantes</small></div>
             </div>
         </div>
+    </div> -->
+    <div id="view-dash" class="view-section hidden">
+    <div class="kpi-container">
+        <div class="dash-card kpi-main">
+            <span class="dash-label">Progresso da Semana</span>
+            <div class="progress-circle" id="dash-perc">0%</div>
+            <p id="kpi-status-text" style="font-size: 0.75rem; font-weight: 600; margin-top: 10px;"></p>
+        </div>
+
+        <div class="kpi-sub-grid">
+            <div class="dash-card kpi-small">
+                <span class="dash-label">Total Lojas</span>
+                <span class="dash-value" id="dash-total">0</span>
+                <div class="kpi-trend">Meta Semanal</div>
+            </div>
+            <div class="dash-card kpi-small">
+                <span class="dash-label">Eficiência</span>
+                <span class="dash-value" id="dash-eficiencia" style="color:var(--accent)">0%</span>
+                <div class="kpi-trend">Visitas/Dia</div>
+            </div>
+        </div>
     </div>
+
+    <div class="dash-card detail-stats">
+        <div class="stat-row">
+            <div class="stat-item">
+                <div class="stat-icon success">✓</div>
+                <div>
+                    <span class="dash-label">Realizadas</span>
+                    <span class="dash-value-sm" id="dash-feitas">0</span>
+                </div>
+            </div>
+            <div class="stat-separator"></div>
+            <div class="stat-item">
+                <div class="stat-icon warning">!</div>
+                <div>
+                    <span class="dash-label">Pendentes</span>
+                    <span class="dash-value-sm" id="dash-faltam">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-card projecao-card">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <span class="dash-label">Status da Operação</span>
+            <span id="badge-operacao" class="badge">Em dia</span>
+        </div>
+        <div class="progress-bar-bg">
+            <div id="inner-progress-bar" class="progress-bar-fill"></div>
+        </div>
+    </div>
+</div>
 </div>
 
 <nav>
@@ -123,7 +505,7 @@
         }
     }
 
-    function renderizar() {
+    /* function renderizar() {
         const semanaAtiva = (getWeekNumber(new Date()) % 2 === 0) ? 2 : 1;
         const diasSemanaMap = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
         const hojeNome = diasSemanaMap[new Date().getDay()];
@@ -133,7 +515,6 @@
 
         let htmlHoje = '';
         let htmlSemana = '';
-        
         let stats = { hojeTotal: 0, hojeFeito: 0, semTotal: 0, semFeito: 0 };
 
         const diasArray = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"];
@@ -146,7 +527,8 @@
             
             itensDoDia.forEach(cols => {
                 const [sem, dia, tipo, nome] = cols;
-                if (tipo.toUpperCase() === "REDE") {
+                
+                if (tipo && tipo.toUpperCase() === "REDE") {
                     diaHtml += `<div class="rede-header">${nome}</div>`;
                 } else if (nome) {
                     const id = `v5-${semanaAtiva}-${diaNome}-${nome.replace(/\W/g, '')}`;
@@ -160,10 +542,18 @@
                         if(isChecked) stats.hojeFeito++;
                     }
 
+                    // Aqui ele usa o nome (que já tem o endereço) para criar a rota
+                    const linkMapa = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(nome)}`;
+
                     diaHtml += `
                         <div class="loja-item ${isChecked ? 'done' : ''}">
-                            <input type="checkbox" ${isChecked} onchange="toggleCheck(this, '${id}')">
-                            <span>${nome}</span>
+                            <div class="loja-info">
+                                <input type="checkbox" ${isChecked} onchange="toggleCheck(this, '${id}')">
+                                <span>${nome}</span>
+                            </div>
+                            <a href="${linkMapa}" target="_blank" class="btn-rota">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </a>
                         </div>`;
                 }
             });
@@ -173,22 +563,112 @@
             htmlSemana += diaHtml;
         });
 
-        // Atualiza interface
         document.getElementById('cronograma-hoje').innerHTML = htmlHoje || '<div class="loading">Folga hoje! 🥳</div>';
         document.getElementById('cronograma-semana').innerHTML = htmlSemana;
         
-        // Stats Hoje
         document.getElementById('total-cont').innerText = stats.hojeTotal;
         document.getElementById('check-cont').innerText = stats.hojeFeito;
 
-        // Stats Dashboard
         const perc = stats.semTotal > 0 ? Math.round((stats.semFeito / stats.semTotal) * 100) : 0;
-        document.getElementById('dash-perc').innerText = perc + '%';
-        document.getElementById('dash-perc').style.setProperty('--perc', perc + '%');
-        document.getElementById('dash-total').innerText = stats.semTotal;
-        document.getElementById('dash-feitas').innerText = stats.semFeito;
-        document.getElementById('dash-faltam').innerText = stats.semTotal - stats.semFeito;
+        const dashPerc = document.getElementById('dash-perc');
+        if(dashPerc) {
+            dashPerc.innerText = perc + '%';
+            dashPerc.style.setProperty('--perc', perc + '%');
+        }
+    } */
+
+    function renderizar() {
+    const semanaAtiva = (getWeekNumber(new Date()) % 2 === 0) ? 2 : 1;
+    const diasSemanaMap = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+    const hojeNome = diasSemanaMap[new Date().getDay()];
+
+    document.getElementById('semana-info').innerText = `Semana ${semanaAtiva}`;
+    document.getElementById('data-hoje').innerText = hojeNome.toUpperCase() + ", " + new Date().toLocaleDateString('pt-BR');
+
+    let htmlHoje = '';
+    let htmlSemana = '';
+    let stats = { hojeTotal: 0, hojeFeito: 0, semTotal: 0, semFeito: 0 };
+
+    const diasArray = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"];
+
+    diasArray.forEach(diaNome => {
+        const itensDoDia = dadosPlanilha.filter(cols => cols[0] == semanaAtiva && cols[1].toLowerCase() == diaNome);
+        if (itensDoDia.length === 0) return;
+
+        let diaHtml = `<div class="dia-card"><h3>${diaNome.toUpperCase()}</h3>`;
+        
+        itensDoDia.forEach(cols => {
+            const [sem, dia, tipo, nome] = cols;
+            
+            if (tipo && tipo.toUpperCase() === "REDE") {
+                diaHtml += `<div class="rede-header">${nome}</div>`;
+            } else if (nome) {
+                const id = `v5-${semanaAtiva}-${diaNome}-${nome.replace(/\W/g, '')}`;
+                const isChecked = checkins[id] ? 'checked' : '';
+                
+                stats.semTotal++;
+                if(isChecked) stats.semFeito++;
+
+                if (diaNome === hojeNome) {
+                    stats.hojeTotal++;
+                    if(isChecked) stats.hojeFeito++;
+                }
+
+                const linkMapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nome)}`;
+
+                diaHtml += `
+                    <div class="loja-item ${isChecked ? 'done' : ''}">
+                        <div class="loja-info">
+                            <input type="checkbox" ${isChecked} onchange="toggleCheck(this, '${id}')">
+                            <span>${nome}</span>
+                        </div>
+                        <a href="${linkMapa}" target="_blank" class="btn-rota">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        </a>
+                    </div>`;
+            }
+        });
+        diaHtml += `</div>`;
+
+        if (diaNome === hojeNome) htmlHoje = diaHtml;
+        htmlSemana += diaHtml;
+    });
+
+    // Atualiza Listas
+    document.getElementById('cronograma-hoje').innerHTML = htmlHoje || '<div class="loading">Folga hoje! 🥳</div>';
+    document.getElementById('cronograma-semana').innerHTML = htmlSemana;
+    
+    // Atualiza Stats da aba "Hoje"
+    document.getElementById('total-cont').innerText = stats.hojeTotal;
+    document.getElementById('check-cont').innerText = stats.hojeFeito;
+
+    // --- CÁLCULOS DO DASHBOARD ---
+    const percSemana = stats.semTotal > 0 ? Math.round((stats.semFeito / stats.semTotal) * 100) : 0;
+    const eficiencia = stats.hojeTotal > 0 ? Math.round((stats.hojeFeito / stats.hojeTotal) * 100) : 0;
+    const faltam = stats.semTotal - stats.semFeito;
+
+    // Atualiza elementos de texto
+    if(document.getElementById('dash-perc')) {
+        document.getElementById('dash-perc').innerText = percSemana + '%';
+        document.getElementById('dash-perc').style.setProperty('--perc', percSemana + '%');
     }
+    if(document.getElementById('dash-total')) document.getElementById('dash-total').innerText = stats.semTotal;
+    if(document.getElementById('dash-feitas')) document.getElementById('dash-feitas').innerText = stats.semFeito;
+    if(document.getElementById('dash-faltam')) document.getElementById('dash-faltam').innerText = faltam;
+    if(document.getElementById('dash-eficiencia')) document.getElementById('dash-eficiencia').innerText = eficiencia + '%';
+    
+    // Barra de progresso inferior
+    const bar = document.getElementById('inner-progress-bar');
+    if(bar) bar.style.width = percSemana + '%';
+
+    // Badge de Status
+    const badge = document.getElementById('badge-operacao');
+    if(badge) {
+        if(percSemana >= 100) { badge.innerText = "Concluído"; badge.style.background = "#dcfce7"; }
+        else if(percSemana > 0) { badge.innerText = "Em Dia"; badge.style.background = "#dbeafe"; }
+        else { badge.innerText = "A Iniciar"; badge.style.background = "#f1f5f9"; }
+    }
+}
 
     function toggleCheck(el, id) {
         if (el.checked) checkins[id] = true;
